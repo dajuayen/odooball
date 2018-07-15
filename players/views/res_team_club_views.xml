@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <!-- Club Form View-->
+    <record id="res_team_club_view_form" model="ir.ui.view">
+        <field name="name">Clubs</field>
+        <field name="model">res.team.club</field>
+        <field name="arch" type="xml">
+            <form string="Club">
+                <group col="4">
+                    <field name="name"/>
+                    <field name="full_name"/>
+                    <field name="active"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Club Tree View -->
+    <record id="res_team_club_view_tree" model="ir.ui.view">
+        <field name="name">Clubs</field>
+        <field name="model">res.team.club</field>
+        <field eval="6" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Club">
+                <field name="name"/>
+                <field name="full_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Club Action -->
+    <record id="res_team_club_action" model="ir.actions.act_window">
+        <field name="name">Clubs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.team.club</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new club.
+            </p>
+            <p>
+                Manage teams to better classify in theirs clubs.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="res_team_club_menu_teams"
+        action="players.res_team_club_action"
+        name="Clubs"
+        sequence="2" parent="res_team_menu_players"/>
+
+    </data>
+</odoo>

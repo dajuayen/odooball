@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <!-- Team Kanban View -->
+    <record id="res_team_kanban_view" model="ir.ui.view">
+        <field name="name">res.team.kanban</field>
+        <field name="model">res.team</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban">
+                <field name="name"/>
+                <field name="club_id"/>
+                <field name="category_id"/>
+                <field name="season_id"/>
+                <field name="sequence"/>
+                <field name="user_ids"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="website"/>
+                <field name="player_ids"/>
+                <field name="gadge_small"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_res_partner_kanban">
+                            <div class="o_kanban_image">
+                                <t t-if="record.gadge_small.raw_value">
+                                    <img t-att-src="kanban_image('res.team', 'gadge_small', record.id.raw_value)"/>
+                                </t>
+                                <t t-if="!record.gadge_small.raw_value">
+                                    <img t-att-src='_s + "/base/static/src/img/avatar.png"'/>
+                                </t>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title oe_partner_heading"><field name="name"/></strong>
+                                <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
+                                <ul>
+                                    <li t-if="record.club_id.raw_value"><field name="club_id"/></li>
+                                    <li t-if="record.category_id.raw_value"><field name="category_id"/></li>
+                                    <li t-if="record.season_id.raw_value"><field name="season_id"/></li>
+                                    <li t-if="record.email.raw_value"><field name="email"/></li>
+                                    <li t-if="record.phone.raw_value"><field name="phone"/></li>
+                                    <li t-if="record.website.raw_value"><field name="website"/></li>
+                                    <li t-if="record.email.raw_value" class="o_text_overflow"><field name="email"/></li>
+                                </ul>
+                                <div class="oe_kanban_partner_links"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!--Team Tree View    -->
+    <record id="res_team_tree_view" model="ir.ui.view">
+        <field name="name">res.team.tree</field>
+        <field name="model">res.team</field>
+        <field eval="8" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Teams">
+                <field name="name"/>
+                <field name="club_id"/>
+                <field name="category_id"/>
+                <field name="season_id"/>
+                <field name="user_ids" widget="many2many_tags"/>
+                <field name="phone"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Team Form View-->
+    <record id="res_team_form_view" model="ir.ui.view">
+        <field name="name">res.team.form</field>
+        <field name="model">res.team</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <form string="Partners">
+            <sheet>
+                <field name="gadge" widget='image' class="oe_avatar" options='{"preview_image": "gadge_medium", "size": [90, 90]}'/>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="club_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="category_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="season_id" options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+                    <group>
+                        <field name="phone" widget="phone"/>
+                        <field name="email" widget="email" context="{'gravatar_image': True}"/>
+                        <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
+                    </group>
+                </group>
+                <field name="player_ids" />
+                <notebook colspan="4">
+                    <!--<page string="Coachs &amp; Addresses" autofocus="autofocus">-->
+                        <!--<field name="user_ids" mode="kanban" context="{'default_paren': active_id, 'default_street': street, 'default_street2': street2}">-->
+                            <!--<kanban>-->
+                                <!--<field name="color"/>-->
+                                <!--<field name="name"/>-->
+                                <!--<field name="type"/>-->
+                                <!--<field name="email"/>-->
+                                <!--<field name="phone"/>-->
+                                <!--<field name="street"/>-->
+                                <!--<field name="street2"/>-->
+                                <!--<field name="mobile"/>-->
+                                <!--<field name="image_small"/>-->
+                                <!--&lt;!&ndash; fields in form x2many view to diminish requests &ndash;&gt;-->
+                                <!--<field name="comment"/>-->
+                                <!--<templates>-->
+                                    <!--<t t-name="kanban-box">-->
+                                        <!--<t t-set="color" t-value="kanban_color(record.color.raw_value)"/>-->
+                                        <!--<div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">-->
+                                            <!--<a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>-->
+                                            <!--<div class="o_kanban_image">-->
+                                                <!--<img t-if="record.image_small.raw_value" t-att-src="'data:image/png;base64,'+record.image_small.raw_value"/>-->
+                                            <!--</div>-->
+                                            <!--<div class="oe_kanban_details">-->
+                                                <!--<field name="name"/>-->
+                                                <!--<div t-if="record.email.raw_value"><field name="email" widget="email"/></div>-->
+                                                <!--<div t-if="record.phone.raw_value">Phone: <field name="phone"/></div>-->
+                                                <!--<div t-if="record.mobile.raw_value">Mobile: <field name="mobile"/></div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</t>-->
+                                <!--</templates>-->
+                            <!--</kanban>-->
+                            <!--<form string="Coachs / Address">-->
+                                <!--<sheet>-->
+                                    <!--&lt;!&ndash; parent_id and type fields needed in attrs in base_address_city module which overwrites-->
+                                    <!--_fields_view_get() of partner. It would be better to put those fields there but the web client-->
+                                    <!--dosen't support when a field is displayed several times in the same view.&ndash;&gt;-->
+                                    <!--<field name="type" required="1" widget="radio" options="{'horizontal': true}"/>-->
+                                    <!--<field name="parent_id" invisible="1"/>-->
+                                    <!--<hr/>-->
+                                    <!--<group>-->
+                                        <!--<group attrs="{'invisible': [('type','=', 'contact')]}">-->
+                                            <!--<label for="street" string="Address"/>-->
+                                            <!--<div>-->
+                                                <!--<div class="o_address_format" name="div_address">-->
+                                                    <!--<field name="street" placeholder="Street..." class="o_address_street"/>-->
+                                                    <!--<field name="street2" placeholder="Street 2..." class="o_address_street"/>-->
+                                                    <!--<field name="city" placeholder="City" class="o_address_city"/>-->
+                                                    <!--<field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' context="{'country_id': country_id, 'zip': zip}"/>-->
+                                                    <!--<field name="zip" placeholder="ZIP" class="o_address_zip"/>-->
+                                                    <!--<field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</group>-->
+                                        <!--<group>-->
+                                            <!--<field name="name" string="Contact Name" attrs="{'required' : [('type', '=', 'contact')]}"/>-->
+                                            <!--<field name="title" placeholder="e.g. Mr."-->
+                                                <!--attrs="{'invisible': [('type','!=', 'contact')]}"/>-->
+                                            <!--<field name="function" placeholder="e.g. Sales Director"-->
+                                                <!--attrs="{'invisible': [('type','!=', 'contact')]}"/>-->
+                                            <!--<field name="email"/>-->
+                                            <!--<field name="phone" widget="phone"/>-->
+                                            <!--<field name="mobile" widget="phone"/>-->
+                                            <!--<field name="comment" placeholder="internal note..."/>-->
+                                        <!--</group>-->
+                                    <!--</group>-->
+                                    <!--<field name="supplier" invisible="True"/>-->
+                                    <!--<field name="customer" invisible="True"/>-->
+                                    <!--<field name="lang" invisible="True"/>-->
+                                    <!--<field name="image" invisible="True"/>-->
+                                <!--</sheet>-->
+                            <!--</form>-->
+                        <!--</field>-->
+                    <!--</page>-->
+                    <page name='internal_notes' string="Internal Notes">
+                        <field name="comment" placeholder="Internal note..."/>
+                    </page>
+                </notebook>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--Search-->
+    <record id="view_res_team_filter" model="ir.ui.view">
+        <field name="name">res.team.select</field>
+        <field name="model">res.team</field>
+        <field name="arch" type="xml">
+            <search string="Search Team">
+                <field name="name"
+                   filter_domain="['|','|',('name','ilike',self),('club_id','=',self),('email','ilike',self)]"/>
+                <field name="club_id" filter_domain="[('club_id','ilike',self)]"/>
+                <field name="category_id" filter_domain="[('category_id','ilike', self)]"/>
+                <field name="season_id" filter_domain="[('season_id','ilike', self)]"/>
+                <field name="user_ids"/>
+                <separator/>
+                <filter name="filter_my_teams" help="My Teams"
+                        domain="[('user_ids','=',uid)]"/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter name="user_ids" context="{'group_by' : 'user_ids'}" />
+                    <filter name="category_id" context="{'group_by' : 'category_id'}" />
+                    <filter name="club_id" context="{'group_by': 'club_id'}"/>
+                    <filter name="season_id" context="{'group_by': 'season_id'}"/>
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <!--Action-->
+    <record id="action_teams" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.team</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="players.view_res_team_filter"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a player in your teams directory.
+          </p><p>
+            Odoo helps you easily track all activities related to
+            a player: discussions, history of players,
+            documents, sessions, injured, etc.
+          </p>
+        </field>
+    </record>
+
+
+    <record id="action_teams_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="players.res_team_kanban_view"/>
+        <field name="act_window_id" ref="action_teams"/>
+    </record>
+    <record id="action_teams_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="players.res_team_tree_view"/>
+        <field name="act_window_id" ref="action_teams"/>
+    </record>
+    <record id="action_teams_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="players.res_team_form_view"/>
+        <field name="act_window_id" ref="action_teams"/>
+    </record>
+
+
+    <menuitem id="res_team_menu_players"
+        name="Teams"
+        parent="menu_players"
+        sequence="2"/>
+
+    <menuitem id="res_team_menu_teams"
+        name="Teams"
+        action="action_teams"
+        parent="res_team_menu_players"
+        sequence="1"/>
+
+    </data>
+</odoo>

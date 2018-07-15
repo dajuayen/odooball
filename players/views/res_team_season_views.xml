@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <!-- Club Form View-->
+    <record id="res_team_season_view_form" model="ir.ui.view">
+        <field name="name">Season</field>
+        <field name="model">res.team.season</field>
+        <field name="arch" type="xml">
+            <form string="Season">
+                <group col="4">
+                    <field name="name"/>
+                    <field name="full_name"/>
+                    <field name="active"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Club Tree View -->
+    <record id="res_team_season_view_tree" model="ir.ui.view">
+        <field name="name">Season</field>
+        <field name="model">res.team.season</field>
+        <field eval="6" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Season">
+                <field name="name"/>
+                <field name="full_name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Club Action -->
+    <record id="res_team_season_action" model="ir.actions.act_window">
+        <field name="name">Season</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.team.season</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new season.
+            </p>
+            <p>
+                Manage season to better classify in theirs teams.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_res_team_season_form"
+        action="players.res_team_season_action"
+        name="Season"
+        sequence="4" parent="players_menu_config"/>
+
+
+
+    </data>
+</odoo>

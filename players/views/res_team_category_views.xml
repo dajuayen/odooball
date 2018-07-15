@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <!-- Category Form View-->
+    <record id="view_res_team_category_form" model="ir.ui.view">
+        <field name="name">Categories</field>
+        <field name="model">res.team.category</field>
+        <field name="arch" type="xml">
+            <form string="Category">
+                <group col="4">
+                    <field name="name"/>
+                    <field name="active"/>
+                    <field name="parent_id"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Category Tree View -->
+    <record id="view_res_team_category_tree" model="ir.ui.view">
+        <field name="name">Categories</field>
+        <field name="model">res.team.category</field>
+        <field eval="6" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Categories">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Category Action -->
+    <record id="res_team_category_action" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.team.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new category.
+            </p>
+            <p>
+                Manage season to better classify in theirs teams.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="res_team_category_menu_teams"
+        action="players.res_team_category_action"
+        name="Categories"
+        sequence="4" parent="res_team_menu_players"/>
+
+
+    </data>
+</odoo>
