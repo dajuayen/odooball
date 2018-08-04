@@ -17,41 +17,33 @@ class Team(models.Model):
     def _get_logo(self):
         return base64.b64encode(open(os.path.join(tools.config['root_path'], 'addons', 'base', 'res', 'res_company_logo.png'), 'rb') .read())
 
-    @api.model
-    def _get_euro(self):
-        return self.env['res.currency.rate'].search([('rate', '=', 1)], limit=1).currency_id
-
-    @api.model
-    def _get_user_currency(self):
-        currency_id = self.env['res.users'].browse(self._uid).company_id.currency_id
-        return currency_id or self._get_euro()
-
-    name = fields.Char(string='Team Name', compute='_compute_team_name')
+    name = fields.Char(string=_('Team Name'), compute='_compute_team_name')
     club_id = fields.Many2one('res.team.club', 'Club')
-    category_id = fields.Many2one('res.team.category', 'Category')
+    category_id = fields.Many2one('res.team.category', _('Category'))
     season_id = fields.Many2one('res.team.season', 'Season')
-    sequence = fields.Integer(help='Used to order Teams in the team switcher', default=10)
-    # image: all image fields are base64 encoded and PIL-supported
-    gadge = fields.Binary("Image", attachment=True,
-        help="This field holds the image used as avatar for this team, limited to 1024x1024px",)
-    gadge_medium = fields.Binary("Medium-sized image", attachment=True,
-        help="Medium-sized image of this team. It is automatically "\
-             "resized as a 128x128px image, with aspect ratio preserved. "\
-             "Use this field in form views or some kanban views.")
-    gadge_small = fields.Binary("Small-sized image", attachment=True,
-        help="Small-sized image of this team. It is automatically "\
-             "resized as a 64x64px image, with aspect ratio preserved. "\
-             "Use this field anywhere a small image is required.")
+    sequence = fields.Integer(help=_('Used to order Teams in the team switcher'), default=10)
 
-    user_ids = fields.Many2many('res.users', 'res_company_users_rel', 'cid', 'user_id', string='Accepted Users')
+    user_ids = fields.Many2many('res.users', 'res_team_users_rel', 'team_id', 'user_id', string=_('Accepted Users'))
 
-    email = fields.Char(help="Email of Team, person responsible or manager.")
-    phone = fields.Char(help="Phone of Team, person responsible or manager.")
-    website = fields.Char(help="Website of Team, person responsible or manager.")
+    email = fields.Char(help=_("Email of Team, person responsible or manager."))
+    phone = fields.Char(help=_("Phone of Team, person responsible or manager."))
+    website = fields.Char(help=_("Website of Team, person responsible or manager."))
 
+    field_id = fields.Many2one('res.field', _('Field where play its matchs.'))
     player_ids = fields.One2many('res.partner', 'team_id', string='Players', help='Players related to this team.')
 
     comment = fields.Text(string='Notes')
+    # image: all image fields are base64 encoded and PIL-supported
+    gadge = fields.Binary("Image", attachment=True,
+                          help=_("This field holds the image used as avatar for this team, limited to 1024x1024px"), )
+    gadge_medium = fields.Binary("Medium-sized image", attachment=True,
+                                 help=_("Medium-sized image of this team. It is automatically " \
+                                      "resized as a 128x128px image, with aspect ratio preserved. " \
+                                      "Use this field in form views or some kanban views."))
+    gadge_small = fields.Binary("Small-sized image", attachment=True,
+                                help=_("Small-sized image of this team. It is automatically " \
+                                     "resized as a 64x64px image, with aspect ratio preserved. " \
+                                     "Use this field anywhere a small image is required."))
 
     @api.multi
     @api.onchange('club_id', 'category_id', 'season_id')

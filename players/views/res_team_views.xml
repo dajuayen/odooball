@@ -87,6 +87,7 @@
                         <field name="club_id" options="{'no_open': True, 'no_create': True}"/>
                         <field name="category_id" options="{'no_open': True, 'no_create': True}"/>
                         <field name="season_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="field_id" options="{'no_open': True, 'no_create': True}"/>
                     </group>
                     <group>
                         <field name="phone" widget="phone"/>

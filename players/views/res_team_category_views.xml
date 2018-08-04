@@ -4,7 +4,7 @@
 
     <!-- Category Form View-->
     <record id="view_res_team_category_form" model="ir.ui.view">
-        <field name="name">Categories</field>
+        <field name="name">res.team.category.form</field>
         <field name="model">res.team.category</field>
         <field name="arch" type="xml">
             <form string="Category">
@@ -19,7 +19,7 @@
 
     <!-- Category Tree View -->
     <record id="view_res_team_category_tree" model="ir.ui.view">
-        <field name="name">Categories</field>
+        <field name="name">res.team.category.tree</field>
         <field name="model">res.team.category</field>
         <field eval="6" name="priority"/>
         <field name="arch" type="xml">
