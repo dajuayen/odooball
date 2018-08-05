@@ -8,6 +8,7 @@
         <field name="res_model">res.partner</field>
         <field name="view_type">form</field>
         <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('member_type','=','player')]</field>
         <field name="search_view_id" ref="base.view_res_partner_filter"/>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
@@ -19,6 +20,7 @@
           </p>
         </field>
     </record>
+
     <record id="action_players_view_kanban" model="ir.actions.act_window.view">
         <field name="sequence" eval="0"/>
         <field name="view_mode">kanban</field>
@@ -38,25 +40,115 @@
         <field name="act_window_id" ref="action_players"/>
     </record>
 
+    <!--Coachs-->
+    <record id="action_coachs" model="ir.actions.act_window">
+        <field name="name">Coachs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('member_type','=','coach')]</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a player in your players directory.
+          </p><p>
+            Odoo helps you easily track all activities related to
+            a player: discussions, history of players,
+            documents, sessions, injured, etc.
+          </p>
+        </field>
+    </record>
 
-    <menuitem name="Players"
-        id="menu_players"
+    <record id="action_coachs_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="base.res_partner_kanban_view"/>
+        <field name="act_window_id" ref="action_coachs"/>
+    </record>
+    <record id="action_coachs_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="base.view_partner_tree"/>
+        <field name="act_window_id" ref="action_coachs"/>
+    </record>
+    <record id="action_coachs_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="base.view_partner_form"/>
+        <field name="act_window_id" ref="action_coachs"/>
+    </record>
+
+    <!-- Responsible-->
+    <record id="action_responsibles" model="ir.actions.act_window">
+        <field name="name">Responsibles</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('member_type','=','responsible')]</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a player in your players directory.
+          </p><p>
+            Odoo helps you easily track all activities related to
+            a player: discussions, history of players,
+            documents, sessions, injured, etc.
+          </p>
+        </field>
+    </record>
+
+    <record id="action_responsibles_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="base.res_partner_kanban_view"/>
+        <field name="act_window_id" ref="action_responsibles"/>
+    </record>
+    <record id="action_responsibles_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="base.view_partner_tree"/>
+        <field name="act_window_id" ref="action_responsibles"/>
+    </record>
+    <record id="action_responsibles_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="base.view_partner_form"/>
+        <field name="act_window_id" ref="action_responsibles"/>
+    </record>
+
+    <menuitem name="Members Team"
+        id="menu_members"
         sequence="4"
         web_icon="contacts,static/description/icon.png"
         groups="base.group_user,base.group_partner_manager"/>
 
-    <menuitem id="res_partner_menu_players"
-        name="Players"
+    <menuitem id="res_partner_menu_members"
+        name="Members"
+        parent="menu_members"
+        sequence="1"/>
+
+    <menuitem id="menu_res_partner_menu_players"
         action="action_players"
-        parent="menu_players"
-        sequence="2"/>
+        name="Players"
+        sequence="1" parent="res_partner_menu_members"/>
+
+    <menuitem id="menu_res_partner_menu_coachs"
+        action="action_coachs"
+        name="Coachs"
+        sequence="2" parent="res_partner_menu_members"/>
+
+    <menuitem id="menu_res_partner_menu_responsibles"
+        action="action_responsibles"
+        name="Responsibles"
+        sequence="2" parent="res_partner_menu_members"/>
 
     <menuitem id="players_menu_config"
         name="Configuration"
-        parent="menu_players"
+        parent="menu_members"
         groups="base.group_system"
         sequence="6"/>
-
 
 <!--clasificar al jugador: vetererano, problematico-->
     <menuitem id="menu_players_category_form"

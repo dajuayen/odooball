@@ -52,7 +52,7 @@
     <menuitem id="res_team_category_menu_teams"
         action="players.res_team_category_action"
         name="Categories"
-        sequence="4" parent="res_team_menu_players"/>
+        sequence="4" parent="res_team_menu_members"/>
 
 
     </data>

@@ -17,9 +17,11 @@
                     </div>
                     <field name="image" widget='image' class="oe_avatar" options='{"preview_image": "image_medium", "size": [90, 90]}'/>
                     <div class="oe_title">
-                        <field name="name"/>
-                        <field name="surface"/>
-                        <field name="description" placeholder="Little, irregular and slow."/>
+                        <h1><field name="name"/></h1>
+                        <div class="o_row">
+                            <h3><field name="surface"/></h3>
+                            <field name="description" placeholder="Little, irregular and slow."/>
+                        </div>
                     </div>
                     <field name="team_ids"/>
                     <notebook colspan="4">
@@ -41,8 +43,8 @@
                                                options='{"no_open": True, "no_create": True}'/>
                                     </div>
                                 </group>
-                                <group col="4">
-                            <field name="phone" widget="phone"/>
+                                <group>
+                                    <field name="phone" widget="phone"/>
                                     <field name="email" widget="email" context="{'gravatar_image': True}"/>
                                     <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
                                 </group>
@@ -93,6 +95,6 @@
     <menuitem id="res_field_menu_teams"
         action="players.res_field_action"
         name="Fields"
-        sequence="5" parent="res_team_menu_players"/>
+        sequence="5" parent="res_team_menu_members"/>
     </data>
 </odoo>

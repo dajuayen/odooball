@@ -22,9 +22,9 @@
                             <field name="team_id" placeholder="Team"/>
                             <!--<button name="create_team" type="object" string="Create team" class="btn btn-sm oe_edit_only fa fa-external-link btn btn-link "/>-->
                         </div>
-                        <div class="o_row">
-                            <field name="position_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     </div>
+                    <div class="o_row">
+                        <field name="position_tag" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     </div>
                 </xpath>
                 <xpath expr="//field[@name='website']" position='attributes'>

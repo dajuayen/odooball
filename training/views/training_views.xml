@@ -1,147 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
 
-    <!--FORM VIEW-->
-    <record id="res_training_form_view" model="ir.ui.view">
-        <field name="name">res.training.form</field>
-        <field name="model">res.training</field>
-        <field name="inherit_id" ref="project.edit_project"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[@name='settings']" position="replace">
-                <page name="settings" string="Settings">
-                    <group>
-                        <field name="team_id"/>
-                        <field name="user_id" string="Author"
-                                attrs="{'readonly':[('active','=',False)]}"/>
-                        <field name="subtask_project_id" groups="project.group_subtask_project"/>
-                        <field name="date_start"/>
-                        <field name="field_id"/>
+        <record id="res_exercise_search_view" model="ir.ui.view">
+            <field name="name">res.exercise.search</field>
+            <field name="model">res.exercise</field>
+            <field name="arch" type="xml">
+                <search string="Tasks">
+                    <field name="name" string="Tasks"/>
+                    <field name="tag_ids"/>
+                    <field name="partner_id"/>
+                    <field name="project_id"/>
+                    <field name="user_id"/>
+                    <field name="stage_id"/>
+                    <filter string="My Tasks" name="my_tasks" domain="[('user_id','=',uid)]"/>
+                    <filter string="My Followed Tasks" domain="[('message_is_follower', '=', True)]" />
+                    <filter string="Unassigned" name="unassigned" domain="[('user_id', '=', False)]"/>
+                    <separator/>
+                    <filter string="Starred" name="starred" domain="[('priority','in',[1, 2])]"/>
+                    <separator/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                    <separator/>
+                    <filter string="My Activities" name="activities_my"
+                        domain="[('activity_ids.user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter string="Late Activities" name="activities_overdue"
+                        domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                        help="Show all records which has next action date is before today"/>
+                    <filter string="Today Activities" name="activities_today"
+                        domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="Future Activities" name="activities_upcoming_all"
+                        domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
+                        ]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Project" name="project" context="{'group_by':'project_id'}"/>
+                        <filter string="Task" context="{'group_by':'name'}"/>
+                        <filter string="Assigned to" name="User" context="{'group_by':'user_id'}"/>
+                        <filter string="Stage" name="Stage" context="{'group_by':'stage_id'}"/>
+                        <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <separator/>
+                        <filter string="Last Message" name="group_message_last_post" context="{'group_by':'message_last_post:week'}" invisible="1"/>
                     </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
+                </search>
+            </field>
+        </record>
 
-    <!--TREE VIEW-->
-    <record id="res_training_tree_view" model="ir.ui.view">
-        <field name="name">res.training.tree</field>
-        <field name="model">res.training</field>
-        <field name="arch" type="xml">
-            <tree string="Trainings" default_order="date_start desc"
-                  decoration-info="date_start and (date_start &lt; current_date)">
-                <field name="date_start"/>
-                <field name="name"/>
-                <field name="field_id"/>
-            </tree>
-        </field>
-    </record>
+        <record id="act_res_training_2_res_exercise_all" model="ir.actions.act_window">
+            <field name="name">Exercises</field>
+            <field name="res_model">res.exercise</field>
+            <field name="view_mode">kanban,tree,form,calendar,pivot,graph</field>
+            <field name="context">{
+                <!--'group_by': 'stage_id',-->
+                'search_default_training_id': [active_id],
+                'default_training_id': active_id,
+            }</field>
+            <field name="search_view_id" ref="res_exercise_search_view"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Here, you can create new tasks
+                </p>
+                <p>
+                    You can now manage your tasks in order to get things done efficiently. Track progress, discuss, attach documents, etc.
+                </p>
+            </field>
+        </record>
 
-    <!--KANBAN VIEW-->
-    <record id="res_training_kanban_view" model="ir.ui.view">
-        <field name="name">res.training.kanban</field>
-        <field name="model">res.training</field>
-        <field name="arch" type="xml">
-            <kanban class="o_res_partner_kanban">
-                <field name="name"/>
-                <field name="team_id"/>
-                <field name="field_id"/>
-                <field name="date_start"/>
-                <field name="sequence"/>
-                <field name="user_id"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_global_click o_res_partner_kanban">
-                            <div class="o_kanban_image">
-                                <t t-if="record.gadge_small.raw_value">
-                                    <img t-att-src="kanban_image('res.team', 'gadge_small', record.id.raw_value)"/>
-                                </t>
-                                <t t-if="!record.gadge_small.raw_value">
-                                    <img t-att-src='_s + "/base/static/src/img/avatar.png"'/>
-                                </t>
-                            </div>
-                            <div class="oe_kanban_details">
-                                <strong class="o_kanban_record_title oe_partner_heading"><field name="date_start"/></strong>
-                                <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
-                                <ul>
-                                    <li t-if="record.team_id.raw_value"><field name="team_id"/></li>
-                                    <li t-if="record.field_id.raw_value"><field name="field_id"/></li>
-                                    <li t-if="record.name.raw_value"><field name="name"/></li>
-                                </ul>
-                                <div class="oe_kanban_partner_links"/>
+        <!--FORM VIEW-->
+        <record id="res_training_form_view" model="ir.ui.view">
+            <field name="name">res.training.form</field>
+            <field name="model">res.training</field>
+            <field name="arch" type="xml">
+                <form string="Training">
+                <sheet string="Training">
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button  class="oe_stat_button" name="attachment_tree_view" type="object" icon="fa-files-o">
+                            <field string="Documents" name="doc_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="action"
+                            name="%(act_res_training_2_res_exercise_all)d" icon="fa-tasks">
+                            <field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+                        </button>
+                        <button name="toggle_active" type="object"
+                                confirm="(Un)archiving a project automatically (un)archives its tasks and issues. Do you want to proceed?"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Training Name"/>
+                        </h1>
+                        <div name="options_active" class="oe_edit_only">
+                            <div>
+                                <label for="label_tasks" class="oe_inline" string="Name of the tasks :"/>
+                                <field name="label_tasks" class="oe_inline oe_input_align"/>
                             </div>
                         </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
+                    </div>
+                    <notebook>
+                        <page name="settings" string="Settings">
+                            <group>
+                                <field name="team_id"/>
+                                <field name="user_id" string="Author"
+                                        attrs="{'readonly':[('active','=',False)]}"/>
+                                <field name="subtask_project_id" groups="project.group_subtask_project"/>
+                                <field name="date_start"/>
+                                <field name="field_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
 
-    <!-- SEARCH VIEW-->
-    <record id="res_training_search_view" model="ir.ui.view">
-       <field name="name">res.training.search</field>
-       <field name="model">res.training</field>
-        <field name="arch" type="xml">
-            <search string="Trainings">
-              <field name="name" string="string" domain="[()]"/>
-              <field name="team_id" string="string" domain="[()]"/>
-              <field name="field_id" string="string" domain="[()]"/>
-            </search>
-       </field>
-    </record>
 
-    <!--Action-->
-    <record id="action_training" model="ir.actions.act_window">
-        <field name="name">Training</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">res.training</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="search_view_id" ref="training.res_training_search_view"/>
-        <field name="help" type="html">
-          <p class="oe_view_nocontent_create">
-            Click to add a training session in your planning directory.
-          </p><p>
-            Odoo helps you easily track all activities related to
-            a training session: discussions, history of players,
-            documents, sessions, injured, etc.
-          </p>
-        </field>
-    </record>
+        <!--TREE VIEW-->
+        <record id="res_training_tree_view" model="ir.ui.view">
+            <field name="name">res.training.tree</field>
+            <field name="model">res.training</field>
+            <field name="arch" type="xml">
+                <tree string="Trainings" default_order="date_start desc"
+                      decoration-info="date_start and (date_start &lt; current_date)">
+                    <field name="date_start"/>
+                    <field name="name"/>
+                    <field name="field_id"/>
+                </tree>
+            </field>
+        </record>
 
-    <record id="action_training_view_kanban" model="ir.actions.act_window.view">
-        <field name="sequence" eval="0"/>
-        <field name="view_mode">kanban</field>
-        <field name="view_id" ref="training.res_training_kanban_view"/>
-        <field name="act_window_id" ref="action_training"/>
-    </record>
-    <record id="action_training_view_tree" model="ir.actions.act_window.view">
-        <field name="sequence" eval="1"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="training.res_training_tree_view"/>
-        <field name="act_window_id" ref="action_training"/>
-    </record>
-    <record id="action_training_view_form" model="ir.actions.act_window.view">
-        <field name="sequence" eval="2"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="training.res_training_form_view"/>
-        <field name="act_window_id" ref="action_training"/>
-    </record>
+        <!--KANBAN VIEW-->
+        <record id="res_training_kanban_view" model="ir.ui.view">
+            <field name="name">res.training.kanban</field>
+            <field name="model">res.training</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban">
+                    <field name="name"/>
+                    <field name="team_id"/>
+                    <field name="field_id"/>
+                    <field name="date_start"/>
+                    <field name="sequence"/>
+                    <field name="user_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="o_kanban_image">
+                                    <t t-if="record.gadge_small.raw_value">
+                                        <img t-att-src="kanban_image('res.team', 'gadge_small', record.id.raw_value)"/>
+                                    </t>
+                                    <t t-if="!record.gadge_small.raw_value">
+                                        <img t-att-src='_s + "/base/static/src/img/avatar.png"'/>
+                                    </t>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading"><field name="date_start"/></strong>
+                                    <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
+                                    <ul>
+                                        <li t-if="record.team_id.raw_value"><field name="team_id"/></li>
+                                        <li t-if="record.field_id.raw_value"><field name="field_id"/></li>
+                                        <li t-if="record.name.raw_value"><field name="name"/></li>
+                                    </ul>
+                                    <div class="oe_kanban_partner_links"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
-    <menuitem name="Training"
-        id="menu_training"
-        sequence="5"
-        web_icon="project,static/description/icon.png"
-        groups="base.group_user,base.group_partner_manager"/>
+        <!-- SEARCH VIEW-->
+        <record id="res_training_search_view" model="ir.ui.view">
+           <field name="name">res.training.search</field>
+           <field name="model">res.training</field>
+            <field name="arch" type="xml">
+                <search string="Trainings">
+                  <field name="name" string="string" domain="[()]"/>
+                  <field name="team_id" string="string" domain="[()]"/>
+                  <field name="field_id" string="string" domain="[()]"/>
+                </search>
+           </field>
+        </record>
 
-    <menuitem id="res_training_menu_training"
-        name="Trainings"
-        action="action_training"
-        parent="menu_training"
-        sequence="2"/>
+        <!--Action-->
+        <record id="action_training" model="ir.actions.act_window">
+            <field name="name">Training</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.training</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="training.res_training_search_view"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a training session in your planning directory.
+              </p><p>
+                Odoo helps you easily track all activities related to
+                a training session: discussions, history of players,
+                documents, sessions, injured, etc.
+              </p>
+            </field>
+        </record>
 
-    <menuitem id="training_menu_config"
-        name="Configuration"
-        parent="menu_training"
-        groups="base.group_system"
-        sequence="6"/>
+        <record id="action_training_view_kanban" model="ir.actions.act_window.view">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="training.res_training_kanban_view"/>
+            <field name="act_window_id" ref="action_training"/>
+        </record>
+        <record id="action_training_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="training.res_training_tree_view"/>
+            <field name="act_window_id" ref="action_training"/>
+        </record>
+        <record id="action_training_view_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training.res_training_form_view"/>
+            <field name="act_window_id" ref="action_training"/>
+        </record>
+
+        <menuitem name="Training"
+            id="menu_training"
+            sequence="5"
+            web_icon="project,static/description/icon.png"
+            groups="base.group_user,base.group_partner_manager"/>
+
+        <menuitem id="res_training_menu_training"
+            name="Trainings"
+            action="action_training"
+            parent="menu_training"
+            sequence="2"/>
+
+        <menuitem id="training_menu_config"
+            name="Configuration"
+            parent="menu_training"
+            groups="base.group_system"
+            sequence="6"/>
+    </data>
 </odoo>

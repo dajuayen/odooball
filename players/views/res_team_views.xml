@@ -245,15 +245,15 @@
     </record>
 
 
-    <menuitem id="res_team_menu_players"
+    <menuitem id="res_team_menu_members"
         name="Teams"
-        parent="menu_players"
+        parent="menu_members"
         sequence="2"/>
 
     <menuitem id="res_team_menu_teams"
         name="Teams"
         action="action_teams"
-        parent="res_team_menu_players"
+        parent="res_team_menu_members"
         sequence="1"/>
 
     </data>

@@ -51,7 +51,7 @@
     <menuitem id="res_team_club_menu_teams"
         action="players.res_team_club_action"
         name="Clubs"
-        sequence="2" parent="res_team_menu_players"/>
+        sequence="2" parent="res_team_menu_members"/>
 
     </data>
 </odoo>
